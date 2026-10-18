@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TripWise — Smart Travel Planner</title>
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: #e0f2fe;
+      --accent: #f97316;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --danger: #ef4444;
+      --radius: 14px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px -2px rgba(0,0,0,0.08);
+      --shadow-lg: 0 12px 24px -4px rgba(0,0,0,0.12);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER / NAVBAR */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--surface-border);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, var(--primary), #38bdf8);
+      color: white;
+      padding: 8px;
+      border-radius: 10px;
+      display: flex;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: var(--transition);
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .badge {
+      background: var(--primary);
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      width: 100%;
+    }
+
+    /* HERO & SEARCH BAR */
+    .hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .controls-panel {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1 1 300px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--surface-border);
+      outline: none;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .filters-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    select {
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--surface-border);
+      background: white;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* DESTINATIONS GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: #cbd5e1;
+    }
+
+    .card-img-wrapper {
+      position: relative;
+      height: 180px;
+      background: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover .card-img {
+      transform: scale(1.05);
+    }
+
+    .card-category {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card-body {
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      color: var(--text-main);
+    }
+
+    .card-country {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-desc {
+      color: #475569;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: #bae6fd;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    /* EMPTY & ERROR STATES */
+    .status-panel {
+      text-align: center;
+      padding: 4rem 1rem;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px dashed var(--surface-border);
+      margin: 1.5rem 0;
+    }
+
+    .status-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: var(--text-muted);
+    }
+
+    .status-panel h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .status-panel p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 400px;
+      margin: 0 auto 1.25rem;
+    }
+
+    /* SKELETON LOADING */
+    .skeleton-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--surface-border);
+      overflow: hidden;
+      height: 340px;
+    }
+
+    .skeleton-box {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border-radius: var(--radius);
+      max-width: 650px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .modal-header-img {
+      height: 240px;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .weather-widget {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .weather-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .weather-temp {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* ITINERARY VIEW */
+    .itinerary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .itinerary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .itinerary-item {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .itinerary-thumb {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .itinerary-info {
+      flex: 1;
+    }
+
+    .itinerary-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* TOAST ALERT */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #0f172a;
+      color: white;
+      padding: 0.85rem 1.4rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: var(--transition);
+      z-index: 200;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.7rem; }
+      .controls-panel { flex-direction: column; align-items: stretch; }
+      .itinerary-item { flex-direction: column; align-items: flex-start; }
+      .itinerary-thumb { width: 100%; height: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand" onclick="switchView('explore')">
+        <div class="brand-icon"><i data-lucide="compass"></i></div>
+        <span>TripWise</span>
+      </a>
+
+      <div class="nav-tabs">
+        <button id="tab-explore" class="tab-btn active" onclick="switchView('explore')">
+          <i data-lucide="globe"></i> Explore
+        </button>
+        <button id="tab-itinerary" class="tab-btn" onclick="switchView('itinerary')">
+          <i data-lucide="map-pin"></i> My Trip
+          <span id="itinerary-count" class="badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- EXPLORE VIEW -->
+    <section id="view-explore">
+      <div class="hero">
+        <h1>Discover Your Next Adventure</h1>
+        <p>Explore world-famous destinations and curate your personalized travel itinerary.</p>
+      </div>
+
+      <!-- Controls: Search, Category Filter, and Sort -->
+      <div class="controls-panel">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="text" id="searchInput" placeholder="Search destinations, landmarks, cities..." oninput="handleSearch()" />
+        </div>
+
+        <div class="filters-group">
+          <select id="categoryFilter" onchange="applyFilters()">
+            <option value="all">All Categories</option>
+            <option value="Landmark">Landmarks</option>
+            <option value="Nature">Nature & Scenic</option>
+            <option value="Historical">Historical</option>
+            <option value="Beach">Beaches & Islands</option>
+          </select>
+
+          <select id="sortSelect" onchange="applyFilters()">
+            <option value="name-asc">Sort by Name (A-Z)</option>
+            <option value="name-desc">Sort by Name (Z-A)</option>
+            <option value="popular">Popular First</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Live Results Container -->
+      <div id="destinationsGrid" class="grid"></div>
+    </section>
+
+    <!-- ITINERARY VIEW -->
+    <section id="view-itinerary" style="display: none;">
+      <div class="itinerary-header">
+        <div>
+          <h2>My Custom Itinerary</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Organize and review your planned stops</p>
+        </div>
+        <button class="btn btn-danger" onclick="clearItinerary()">
+          <i data-lucide="trash-2"></i> Clear All
+        </button>
+      </div>
+
+      <div id="itineraryContainer" class="itinerary-list"></div>
+    </section>
+  </main>
+
+  <!-- DETAILS & WEATHER MODAL -->
+  <div id="detailsModal" class="modal-backdrop" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeModal()">
+        <i data-lucide="x"></i>
+      </button>
+      <img id="modalImg" src="" alt="Destination" class="modal-header-img" />
+      <div class="modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+          <div>
+            <h2 id="modalTitle" style="font-size: 1.5rem; font-weight: 800;"></h2>
+            <p id="modalCountry" style="color: var(--text-muted); font-size: 0.9rem;"></p>
+          </div>
+          <span id="modalCategory" class="badge" style="background: var(--surface-border); color: var(--text-main);"></span>
+        </div>
+
+        <!-- Weather Widget (Powered by real Open-Meteo API) -->
+        <div class="weather-widget">
+          <div class="weather-info">
+            <i data-lucide="cloud-sun" style="color: var(--primary);"></i>
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Current Weather</div>
+              <div id="weatherDesc" style="font-size: 0.9rem; font-weight: 600;">Loading live weather...</div>
+            </div>
+          </div>
+          <div id="weatherTemp" class="weather-temp">--°C</div>
+        </div>
+
+        <h4 style="margin-top: 1rem; margin-bottom: 0.4rem; font-size: 1rem;">About this Place</h4>
+        <p id="modalDesc" style="color: #475569; font-size: 0.92rem; line-height: 1.6;"></p>
+
+        <div style="margin-top: 1.5rem; display: flex; gap: 0.8rem;">
+          <button id="modalActionBtn" class="btn btn-primary" style="flex: 1; padding: 0.75rem; justify-content: center;">
+            <i data-lucide="plus"></i> Add to Itinerary
+          </button>
+          <a id="modalWikiLink" href="#" target="_blank" class="btn btn-secondary" style="padding: 0.75rem 1rem;">
+            <i data-lucide="external-link"></i> Learn More
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast">
+    <i data-lucide="check-circle" style="color: #38bdf8;"></i>
+    <span id="toastMsg">Action completed!</span>
+  </div>
+
+  <script>
+    // Initial catalog with coordinates & Wikipedia Page titles
+    const INITIAL_DESTINATIONS = [
+      { id: '1', title: 'Eiffel Tower', query: 'Eiffel_Tower', category: 'Landmark', country: 'Paris, France', lat: 48.8584, lon: 2.2945, popularity: 98 },
+      { id: '2', title: 'Grand Canyon', query: 'Grand_Canyon', category: 'Nature', country: 'Arizona, USA', lat: 36.1069, lon: -112.1129, popularity: 94 },
+      { id: '3', title: 'Colosseum', query: 'Colosseum', category: 'Historical', country: 'Rome, Italy', lat: 41.8902, lon: 12.4922, popularity: 95 },
+      { id: '4', title: 'Santorini', query: 'Santorini', category: 'Beach', country: 'Cyclades, Greece', lat: 36.3932, lon: 25.4615, popularity: 92 },
+      { id: '5', title: 'Machu Picchu', query: 'Machu_Picchu', category: 'Historical', country: 'Cusco, Peru', lat: -13.1631, lon: -72.5450, popularity: 96 },
+      { id: '6', title: 'Mount Fuji', query: 'Mount_Fuji', category: 'Nature', country: 'Honshu, Japan', lat: 35.3606, lon: 138.7274, popularity: 91 },
+      { id: '7', title: 'Taj Mahal', query: 'Taj_Mahal', category: 'Historical', country: 'Agra, India', lat: 27.1751, lon: 78.0421, popularity: 97 },
+      { id: '8', title: 'Great Barrier Reef', query: 'Great_Barrier_Reef', category: 'Nature', country: 'Queensland, Australia', lat: -18.2871, lon: 147.6992, popularity: 93 },
+      { id: '9', title: 'Bali', query: 'Bali', category: 'Beach', country: 'Indonesia', lat: -8.3405, lon: 115.0920, popularity: 90 }
+    ];
+
+    let destinations = [];
+    let itinerary = JSON.parse(localStorage.getItem('tripwise_itinerary')) || [];
+    let currentSelectedPlace = null;
+    let searchDebounceTimeout = null;
+
+    // Fetch live destination data from Wikipedia REST API
+    async function initDestinations() {
+      renderSkeletons();
+      try {
+        const promises = INITIAL_DESTINATIONS.map(async (item) => {
+          try {
+            const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${item.query}`);
+            if (!res.ok) throw new Error('API fetch error');
+            const data = await res.json();
+            return {
+              ...item,
+              description: data.extract || 'Explore this magnificent world wonder.',
+              image: data.thumbnail ? data.thumbnail.source : 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80',
+              wikiUrl: data.content_urls ? data.content_urls.desktop.page : '#'
+            };
+          } catch {
+            return {
+              ...item,
+              description: 'World-renowned destination offering rich cultural and natural beauty.',
+              image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80',
+              wikiUrl: '#'
+            };
+          }
+        });
+
+        destinations = await Promise.all(promises);
+        applyFilters();
+      } catch (err) {
+        showErrorState('Unable to load destinations. Please check your internet connection.');
+      }
+    }
+
+    // Render loading skeletons
+    function renderSkeletons() {
+      const container = document.getElementById('destinationsGrid');
+      container.innerHTML = Array(6).fill(0).map(() => `
+        <div class="skeleton-card">
+          <div class="skeleton-box" style="height: 180px;"></div>
+          <div style="padding: 1rem;">
+            <div class="skeleton-box" style="height: 20px; width: 60%; margin-bottom: 0.5rem; border-radius: 4px;"></div>
+            <div class="skeleton-box" style="height: 14px; width: 40%; margin-bottom: 1rem; border-radius: 4px;"></div>
+            <div class="skeleton-box" style="height: 12px; width: 100%; margin-bottom: 0.3rem; border-radius: 4px;"></div>
+            <div class="skeleton-box" style="height: 12px; width: 80%; border-radius: 4px;"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Filter, Search and Sort Logic
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const category = document.getElementById('categoryFilter').value;
+      const sortBy = document.getElementById('sortSelect').value;
+
+      let filtered = destinations.filter(dest => {
+        const matchesQuery = dest.title.toLowerCase().includes(query) || dest.country.toLowerCase().includes(query) || dest.description.toLowerCase().includes(query);
+        const matchesCat = category === 'all' || dest.category === category;
+        return matchesQuery && matchesCat;
+      });
+
+      // Sorting
+      if (sortBy === 'name-asc') {
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (sortBy === 'name-desc') {
+        filtered.sort((a, b) => b.title.localeCompare(a.title));
+      } else if (sortBy === 'popular') {
+        filtered.sort((a, b) => b.popularity - a.popularity);
+      }
+
+      renderDestinations(filtered);
+    }
+
+    function handleSearch() {
+      clearTimeout(searchDebounceTimeout);
+      searchDebounceTimeout = setTimeout(applyFilters, 250);
+    }
+
+    // Render Destinations Cards
+    function renderDestinations(list) {
+      const container = document.getElementById('destinationsGrid');
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="status-panel" style="grid-column: 1 / -1;">
+            <div class="status-icon"><i data-lucide="search-x"></i></div>
+            <h3>No Destinations Found</h3>
+            <p>Try modifying your search keywords or resetting your category filters.</p>
+            <button class="btn btn-secondary" onclick="resetFilters()">Reset Filters</button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = list.map(item => {
+        const isAdded = itinerary.some(i => i.id === item.id);
+        return `
+          <div class="card" onclick="openDetails('${item.id}')">
+            <div class="card-img-wrapper">
+              <img src="${item.image}" alt="${item.title}" class="card-img" loading="lazy" />
+              <span class="card-category">${item.category}</span>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">${item.title}</h3>
+              <div class="card-country"><i data-lucide="map-pin" style="width: 14px; height: 14px;"></i> ${item.country}</div>
+              <p class="card-desc">${item.description}</p>
+              <div class="card-footer" onclick="event.stopPropagation()">
+                <button class="btn ${isAdded ? 'btn-danger' : 'btn-primary'}" onclick="toggleItinerary('${item.id}')">
+                  <i data-lucide="${isAdded ? 'minus' : 'plus'}"></i> ${isAdded ? 'Remove' : 'Add to Trip'}
+                </button>
+                <button class="btn btn-secondary" onclick="openDetails('${item.id}')">Details</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // Modal with Open-Meteo Live Weather API
+    async function openDetails(id) {
+      const item = destinations.find(d => d.id === id);
+      if (!item) return;
+      currentSelectedPlace = item;
+
+      document.getElementById('modalTitle').textContent = item.title;
+      document.getElementById('modalCountry').textContent = item.country;
+      document.getElementById('modalCategory').textContent = item.category;
+      document.getElementById('modalDesc').textContent = item.description;
+      document.getElementById('modalImg').src = item.image;
+      document.getElementById('modalWikiLink').href = item.wikiUrl;
+
+      const isAdded = itinerary.some(i => i.id === item.id);
+      const actionBtn = document.getElementById('modalActionBtn');
+      actionBtn.innerHTML = `<i data-lucide="${isAdded ? 'trash-2' : 'plus'}"></i> ${isAdded ? 'Remove from Itinerary' : 'Add to Itinerary'}`;
+      actionBtn.className = `btn ${isAdded ? 'btn-danger' : 'btn-primary'}`;
+      actionBtn.onclick = () => {
+        toggleItinerary(item.id);
+        openDetails(item.id); // Refresh button state
+      };
+
+      // Reset weather widget
+      document.getElementById('weatherTemp').textContent = '--°C';
+      document.getElementById('weatherDesc').textContent = 'Fetching live weather...';
+      document.getElementById('detailsModal').classList.add('open');
+
+      // Fetch Real Weather from Open-Meteo API
+      try {
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${item.lat}&longitude=${item.lon}&current_weather=true`);
+        const weatherData = await weatherRes.json();
+        if (weatherData.current_weather) {
+          document.getElementById('weatherTemp').textContent = `${Math.round(weatherData.current_weather.temperature)}°C`;
+          document.getElementById('weatherDesc').textContent = `Wind: ${weatherData.current_weather.windspeed} km/h • Code ${weatherData.current_weather.weathercode}`;
+        }
+      } catch {
+        document.getElementById('weatherDesc').textContent = 'Weather info currently unavailable.';
+      }
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('detailsModal').classList.remove('open');
+    }
+
+    function closeModalOnBackdrop(e) {
+      if (e.target.id === 'detailsModal') closeModal();
+    }
+
+    // Itinerary Management with localStorage Persistence
+    function toggleItinerary(id) {
+      const place = destinations.find(d => d.id === id);
+      if (!place) return;
+
+      const index = itinerary.findIndex(i => i.id === id);
+      if (index > -1) {
+        itinerary.splice(index, 1);
+        showToast(`Removed "${place.title}" from your itinerary`);
+      } else {
+        itinerary.push(place);
+        showToast(`Added "${place.title}" to your itinerary!`);
+      }
+
+      saveAndSyncItinerary();
+      applyFilters();
+      renderItinerary();
+    }
+
+    function clearItinerary() {
+      if (itinerary.length === 0) return;
+      if (confirm('Are you sure you want to clear your entire itinerary?')) {
+        itinerary = [];
+        saveAndSyncItinerary();
+        applyFilters();
+        renderItinerary();
+        showToast('Itinerary cleared');
+      }
+    }
+
+    function saveAndSyncItinerary() {
+      localStorage.setItem('tripwise_itinerary', JSON.stringify(itinerary));
+      document.getElementById('itinerary-count').textContent = itinerary.length;
+    }
+
+    function renderItinerary() {
+      const container = document.getElementById('itineraryContainer');
+      if (itinerary.length === 0) {
+        container.innerHTML = `
+          <div class="status-panel">
+            <div class="status-icon"><i data-lucide="calendar"></i></div>
+            <h3>Your Itinerary is Empty</h3>
+            <p>You haven't added any destinations yet. Head back to Explore and pick places to visit!</p>
+            <button class="btn btn-primary" onclick="switchView('explore')">Browse Destinations</button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = itinerary.map((item, idx) => `
+        <div class="itinerary-item">
+          <img src="${item.image}" alt="${item.title}" class="itinerary-thumb" />
+          <div class="itinerary-info">
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">STOP ${idx + 1}</div>
+            <h3 style="font-size: 1.1rem; font-weight: 700;">${item.title}</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">${item.country} • ${item.category}</p>
+          </div>
+          <div class="itinerary-actions">
+            <button class="btn btn-secondary" onclick="openDetails('${item.id}')">View</button>
+            <button class="btn btn-danger" onclick="toggleItinerary('${item.id}')">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // View Switching
+    function switchView(viewName) {
+      document.getElementById('view-explore').style.display = viewName === 'explore' ? 'block' : 'none';
+      document.getElementById('view-itinerary').style.display = viewName === 'itinerary' ? 'block' : 'none';
+      document.getElementById('tab-explore').classList.toggle('active', viewName === 'explore');
+      document.getElementById('tab-itinerary').classList.toggle('active', viewName === 'itinerary');
+      if (viewName === 'itinerary') renderItinerary();
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('categoryFilter').value = 'all';
+      document.getElementById('sortSelect').value = 'name-asc';
+      applyFilters();
+    }
+
+    function showErrorState(message) {
+      document.getElementById('destinationsGrid').innerHTML = `
+        <div class="status-panel" style="grid-column: 1 / -1;">
+          <div class="status-icon" style="color: var(--danger);"><i data-lucide="alert-triangle"></i></div>
+          <h3>Failed to Load Data</h3>
+          <p>${message}</p>
+          <button class="btn btn-primary" onclick="initDestinations()">Retry</button>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Initial Startup
+    saveAndSyncItinerary();
+    initDestinations();
+  </script>
+</body>
+</html>
